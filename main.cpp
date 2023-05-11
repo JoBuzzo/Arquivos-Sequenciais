@@ -1,5 +1,5 @@
 #include <iostream>
-#include <iomanip>
+
 #include <string>
 
 using namespace std;
@@ -46,8 +46,9 @@ struct Livro
 /*
  * Funções de inserção
  */
-void inserirPessoa(struct Pessoa p[], int &index, int quantidade);
-void inserirEditora(struct Editora e[], int &index, int quantidade);
+void inserirPessoa(Pessoa p[], int &index, int quantidade);
+void inserirEditora(Editora e[], int &index, int quantidade);
+void inserirAutor(Autor a[], int &index, int quantidade);
 
 
 
@@ -59,6 +60,7 @@ int main()
 
     Pessoa pessoas[QUANTIDADE]; int indexPessoas;
     Editora editoras[QUANTIDADE]; int indexEditoras;
+    Autor autores[QUANTIDADE]; int indexAutores;
 
     char op = 'x';
     while (op != '0')
@@ -69,6 +71,7 @@ int main()
         cout << "[0] - [Sair]\n";
         cout << "[1] - [Adicionar Pessoas]\n";
         cout << "[2] - [Adicionar Editoras]\n";
+        cout << "[3] - [Adicionar Autores]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -92,6 +95,11 @@ int main()
             inserirEditora(editoras, indexEditoras, QUANTIDADE);
             break;
         }
+        case '3':
+        {
+            inserirAutor(autores, indexAutores, QUANTIDADE);
+            break;
+        }
         default:
         {
             cout << "Opcao invalida";
@@ -103,7 +111,7 @@ int main()
 
 }
 
-void inserirPessoa(struct Pessoa p[], int &index, int quantidade)
+void inserirPessoa(Pessoa p[], int &index, int quantidade)
 {
 
     cout << "Inserindo Pessoas\n";
@@ -123,7 +131,7 @@ void inserirPessoa(struct Pessoa p[], int &index, int quantidade)
     index = i - 1;
 }
 
-void inserirEditora(struct Editora e[], int &index, int quantidade)
+void inserirEditora(Editora e[], int &index, int quantidade)
 {
     cout << "Inserindo Editoras\n";
     int i = 0;
@@ -134,6 +142,24 @@ void inserirEditora(struct Editora e[], int &index, int quantidade)
         if (e[i].id > 0)
         {
             cout << "Nome: "; gets(e[i].nome);
+        }
+        else
+            saida = 0;
+    }
+    index = i - 1;
+}
+
+void inserirAutor(Autor a[], int &index, int quantidade)
+{
+    cout << "Inserindo Autores\n";
+    int i = 0;
+    for (int saida = 1; i < quantidade && saida != 0; i++)
+    {
+        cout << "\n\nId: "; cin >> a[i].id;
+        fflush(stdin);
+        if (a[i].id > 0)
+        {
+            cout << "Descricao: "; gets(a[i].descricao);
         }
         else
             saida = 0;
