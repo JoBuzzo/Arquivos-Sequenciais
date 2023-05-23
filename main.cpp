@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -50,11 +50,18 @@ struct Livro
 /*
  * Funções de inserção
  */
-void inserirPessoa(Pessoa p[], int &index, int quantidade);
-void inserirEditora(Editora e[], int &index, int quantidade);
-void inserirAutor(Autor a[], int &index, int quantidade);
-void inserirGenero(Genero g[], int &index, int quantidade);
-void inserirLivro(Livro l[], int &index, int quantidade);
+void lerPessoa(Pessoa p[], int &index, int quantidade);
+void lerEditora(Editora e[], int &index, int quantidade);
+void lerAutor(Autor a[], int &index, int quantidade);
+void lerGenero(Genero g[], int &index, int quantidade);
+void lerLivro(Livro l[], int &index, int quantidade);
+
+
+/*
+ * Funções de inclusão
+ */
+void incluirPessoa(Pessoa p[], int &index, int quantidade);
+
 
 
 
@@ -115,6 +122,7 @@ int main()
         cout << "[3] - [Adicionar Autores]\n";
         cout << "[4] - [Adicionar Generos]\n";
         cout << "[5] - [Adicionar Livros]\n";
+        cout << "[6] - [Incluir Pessoas]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -130,27 +138,32 @@ int main()
         }
         case '1':
         {
-            inserirPessoa(pessoas, indexPessoas, QUANTIDADE);
+            lerPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
         case '2':
         {
-            inserirEditora(editoras, indexEditoras, QUANTIDADE);
+            lerEditora(editoras, indexEditoras, QUANTIDADE);
             break;
         }
         case '3':
         {
-            inserirAutor(autores, indexAutores, QUANTIDADE);
+            lerAutor(autores, indexAutores, QUANTIDADE);
             break;
         }
         case '4':
         {
-            inserirGenero(generos, indexGeneros, QUANTIDADE);
+            lerGenero(generos, indexGeneros, QUANTIDADE);
             break;
         }
         case '5':
         {
-            inserirLivro(livros, indexLivros, QUANTIDADE);
+            lerLivro(livros, indexLivros, QUANTIDADE);
+            break;
+        }
+        case '6':
+        {
+            incluirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
         default:
@@ -163,7 +176,7 @@ int main()
     }
 }
 
-void inserirPessoa(Pessoa p[], int &index, int quantidade)
+void lerPessoa(Pessoa p[], int &index, int quantidade)
 {
 
     cout << "Inserindo Pessoas\n";
@@ -186,7 +199,7 @@ void inserirPessoa(Pessoa p[], int &index, int quantidade)
     index = i - 1;
 }
 
-void inserirEditora(Editora e[], int &index, int quantidade)
+void lerEditora(Editora e[], int &index, int quantidade)
 {
     cout << "Inserindo Editoras\n";
     int i = 0;
@@ -206,7 +219,7 @@ void inserirEditora(Editora e[], int &index, int quantidade)
     index = i - 1;
 }
 
-void inserirAutor(Autor a[], int &index, int quantidade)
+void lerAutor(Autor a[], int &index, int quantidade)
 {
     cout << "Inserindo Autores\n";
     int i = 0;
@@ -226,7 +239,7 @@ void inserirAutor(Autor a[], int &index, int quantidade)
     index = i - 1;
 }
 
-void inserirGenero(Genero g[], int &index, int quantidade)
+void lerGenero(Genero g[], int &index, int quantidade)
 {
     cout << "Inserindo Genero\n";
     int i = 0;
@@ -246,7 +259,7 @@ void inserirGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void inserirLivro(Livro l[], int &index, int quantidade)
+void lerLivro(Livro l[], int &index, int quantidade)
 {
     cout << "Inserindo Livros\n";
     int i = 0;
@@ -280,3 +293,56 @@ void inserirLivro(Livro l[], int &index, int quantidade)
     index = i - 1;
 }
 
+void incluirPessoa(Pessoa p[], int & index, int quantidade)  //testar
+{
+    Pessoa pNova[quantidade];
+    int indexNova;
+    lerPessoa(pNova, indexNova, quantidade);
+
+
+    Pessoa a[quantidade];
+
+    int i = 0, j = 0, k = 0;
+    for (; i < index && j < indexNova; k++){
+        if(p[i].id < pNova[i].id){
+            a[i].id = p[i].id;
+            strcpy(a[i].nome, p[i].nome);
+            strcpy(a[i].endereco, p[i].endereco);
+        }else{
+            a[i].id = pNova[i].id;
+            strcpy(a[i].nome, pNova[i].nome);
+            strcpy(a[i].endereco, pNova[i].endereco);
+        }
+    }
+
+    while (i < index){
+        a[i].id = p[i].id;
+        strcpy(a[i].nome, p[i].nome);
+        strcpy(a[i].endereco, p[i].endereco);
+
+        i++;
+        k++;
+    }
+
+    while(j < indexNova){
+        a[i].id = pNova[j].id;
+        strcpy(a[i].nome, pNova[j].nome);
+        strcpy(a[i].endereco, pNova[j].endereco);
+
+        j++;
+        k++;
+    }
+    
+
+
+    for (int i = 0; i < k; i++){
+        p[i].id = a[i].id;
+        strcpy(p[i].nome, a[i].nome);
+        strcpy(p[i].endereco, a[i].endereco);
+    }
+    index = k;
+
+
+
+
+}
