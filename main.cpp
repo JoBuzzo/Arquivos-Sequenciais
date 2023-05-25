@@ -54,7 +54,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade);
 void lerEditora(Editora e[], int &index, int quantidade);
 void lerAutor(Autor a[], int &index, int quantidade);
 void lerGenero(Genero g[], int &index, int quantidade);
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor);
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora);
 
 
 /*
@@ -75,6 +75,7 @@ void imprimirPessoa(Pessoa p[], int index, int quantidade);
 
 bool buscarPessoa(Pessoa p[], int id, int index);
 bool buscarAutor(Autor a[], int id, int index);
+bool buscarEditora(Editora e[], int id, int index);
 
 
 void lerData(int &dia, int &mes, int &ano){
@@ -171,7 +172,7 @@ int main()
         }
         case '5':
         {
-            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores);
+            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras);
             break;
         }
         case '6':
@@ -277,11 +278,11 @@ void lerGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor)
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora)
 {
     cout << "Inserindo Livros\n";
     int i = 0;
-    int idPessoa, idAutor;
+    int id;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
         cout << "\n\nId: ";
@@ -301,20 +302,28 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
             imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
 
             cout << "Id Pessoa emprestado: ";
-            cin >> idPessoa;
-            while(!buscarPessoa(p, idPessoa, indexPessoa) && idPessoa != 0){
+            cin >> id;
+            while(!buscarPessoa(p, id, indexPessoa) && id != 0){
                 cout << "Id Pessoa emprestado: ";
-                cin >> idPessoa; 
+                cin >> id; 
             }
-            l[i].id_pessoa_emprestado = idPessoa;
+            l[i].id_pessoa_emprestado = id;
 
             cout << "Id Autor: ";
-            cin >> idAutor;
-            while(!buscarAutor(a, idAutor, indexAutor)){
+            cin >> id;
+            while(!buscarAutor(a, id, indexAutor)){
                 cout << "Id Autor: ";
-                cin >> idAutor;
+                cin >> id;
             }
-            l[i].id_autor = idAutor;
+            l[i].id_autor = id;
+
+            cout << "Id Editora: ";
+            cin >> id;
+            while(!buscarEditora(e, id, indexEditora)){
+                cout << "Id Editora: ";
+                cin >> id;
+            }
+            l[i].id_editora = id;
 
         }
         else
@@ -390,6 +399,9 @@ void imprimirPessoa(Pessoa p[], int index ,int quantidade)
 
 bool buscarPessoa(Pessoa p[], int id, int index)
 {
+    if(id == 0){
+        return false;
+    }
     int i = 0, f = index;
 
     int m = (i + f) / 2;
@@ -416,6 +428,9 @@ bool buscarPessoa(Pessoa p[], int id, int index)
 
 bool buscarAutor(Autor a[], int id, int index)
 {
+    if(id == 0){
+        return false;
+    }
    int i = 0, f = index;
 
     int m = (i + f) / 2;
@@ -435,7 +450,36 @@ bool buscarAutor(Autor a[], int id, int index)
         cout << a[m].id << " " << a[m].nome << " - " << endl;
         return true;
     }else{
-        cout << "Pessoa nao encontrada" << endl;
+        cout << "Autor nao encontrada" << endl;
+        return false;
+    }
+}
+
+bool buscarEditora(Editora e[], int id, int index)
+{
+    if(id == 0){
+        return false;
+    }
+    int i = 0, f = index;
+
+    int m = (i + f) / 2;
+    for (;e[m].id != id && i <= f; m = (i + f) / 2){
+        
+        if (e[m].id > id){
+            f = m - 1;
+        }
+
+        else{
+            i = m + 1;
+        }
+
+    }
+
+    if(id == e[m].id){
+        cout << e[m].id << " " << e[m].nome << " - " << endl;
+        return true;
+    }else{
+        cout << "Editora nao encontrada" << endl;
         return false;
     }
 }
