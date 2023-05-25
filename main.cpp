@@ -68,6 +68,7 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
  * Funções de impressão
  */
 void imprimirPessoa(Pessoa p[], int index, int quantidade);
+void imprimirLivro(Livro l[], int index, int quantidade);
 
 
 /*
@@ -139,6 +140,7 @@ int main()
         cout << "[6] - [Incluir Pessoas]\n";
         cout << "[7] - [Incluir Livros]\n";
         cout << "[8] - [imprimir Pessoas]\n";
+        cout << "[9] - [imprimir Livros]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -191,6 +193,11 @@ int main()
         case '8':
         {
             imprimirPessoa(pessoas, indexPessoas, QUANTIDADE);
+            break;
+        }
+        case '9':
+        {
+            imprimirLivro(livros, indexLivros, QUANTIDADE);
             break;
         }
         default:
@@ -353,7 +360,7 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
 void incluirPessoa(Pessoa p[], int & index, int quantidade)
 {
     Pessoa pNova[quantidade];
-    int indexNova;
+    int indexNova = 0;
     lerPessoa(pNova, indexNova, quantidade);
 
 
@@ -407,7 +414,7 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)
 void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
 {
     Livro lNova[quantidade];
-    int indexNova;
+    int indexNova = 0;
     lerLivro(lNova, indexNova, quantidade, p, indexPessoa, au, indexAutor, e, indexEditora, g, indexGenero);
 
 
@@ -499,6 +506,17 @@ void imprimirPessoa(Pessoa p[], int index ,int quantidade)
         cout << p[i].id << " " << p[i].nome << " - " << p[i].endereco <<endl;
     }
     
+}
+
+void imprimirLivro(Livro l[], int index, int quantidade)
+{
+    for (int i = 0; i < index && i < quantidade; i++)
+    {
+        cout << "Id: " << l[i].id << endl << endl;
+        cout << "Nome: " << l[i].nome << endl;
+        cout << "Qauntidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
+        imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
+    }
 }
 
 bool buscarPessoa(Pessoa p[], int id, int index)
