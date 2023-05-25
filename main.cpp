@@ -54,7 +54,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade);
 void lerEditora(Editora e[], int &index, int quantidade);
 void lerAutor(Autor a[], int &index, int quantidade);
 void lerGenero(Genero g[], int &index, int quantidade);
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora);
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero);
 
 
 /*
@@ -76,7 +76,7 @@ void imprimirPessoa(Pessoa p[], int index, int quantidade);
 bool buscarPessoa(Pessoa p[], int id, int index);
 bool buscarAutor(Autor a[], int id, int index);
 bool buscarEditora(Editora e[], int id, int index);
-
+bool buscarGenero(Genero g[], int id, int index);
 
 void lerData(int &dia, int &mes, int &ano){
     cout << "\nInforme o dia: ";
@@ -172,7 +172,7 @@ int main()
         }
         case '5':
         {
-            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras);
+            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras, generos, indexGeneros);
             break;
         }
         case '6':
@@ -278,7 +278,7 @@ void lerGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora)
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
 {
     cout << "Inserindo Livros\n";
     int i = 0;
@@ -324,6 +324,14 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
                 cin >> id;
             }
             l[i].id_editora = id;
+
+            cout << "Id Genero: ";
+            cin >> id;
+            while(!buscarGenero(g, id, indexGenero)){
+                cout << "Id Genero: ";
+                cin >> id;
+            }
+            l[i].id_genero = id;
 
         }
         else
@@ -447,7 +455,7 @@ bool buscarAutor(Autor a[], int id, int index)
     }
 
     if(id == a[m].id){
-        cout << a[m].id << " " << a[m].nome << " - " << endl;
+        cout << a[m].id << " " << a[m].nome << endl;
         return true;
     }else{
         cout << "Autor nao encontrada" << endl;
@@ -476,10 +484,39 @@ bool buscarEditora(Editora e[], int id, int index)
     }
 
     if(id == e[m].id){
-        cout << e[m].id << " " << e[m].nome << " - " << endl;
+        cout << e[m].id << " " << e[m].nome << endl;
         return true;
     }else{
         cout << "Editora nao encontrada" << endl;
+        return false;
+    }
+}
+
+bool buscarGenero(Genero g[], int id, int index)
+{
+    if(id == 0){
+        return false;
+    }
+    int i = 0, f = index;
+
+    int m = (i + f) / 2;
+    for (;g[m].id != id && i <= f; m = (i + f) / 2){
+        
+        if (g[m].id > id){
+            f = m - 1;
+        }
+
+        else{
+            i = m + 1;
+        }
+
+    }
+
+    if(id == g[m].id){
+        cout << g[m].id << " " << g[m].descricao  << endl;
+        return true;
+    }else{
+        cout << "Genero nao encontrada" << endl;
         return false;
     }
 }
