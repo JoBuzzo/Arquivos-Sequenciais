@@ -54,7 +54,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade);
 void lerEditora(Editora e[], int &index, int quantidade);
 void lerAutor(Autor a[], int &index, int quantidade);
 void lerGenero(Genero g[], int &index, int quantidade);
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa);
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor);
 
 
 /*
@@ -74,6 +74,7 @@ void imprimirPessoa(Pessoa p[], int index, int quantidade);
  */
 
 bool buscarPessoa(Pessoa p[], int id, int index);
+bool buscarAutor(Autor a[], int id, int index);
 
 
 void lerData(int &dia, int &mes, int &ano){
@@ -170,7 +171,7 @@ int main()
         }
         case '5':
         {
-            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas);
+            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores);
             break;
         }
         case '6':
@@ -276,19 +277,52 @@ void lerGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa)
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor)
 {
     cout << "Inserindo Livros\n";
     int i = 0;
-    int idPessoa;
+    int idPessoa, idAutor;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
+        cout << "\n\nId: ";
+        cin >> l[i].id;
+        fflush(stdin);
 
-        cout << "Id Pessoa emprestado: ";
-        cin >> idPessoa;
-        buscarPessoa(p, idPessoa, indexPessoa);
+        if (l[i].id > 0)
+        {
+
+            cout << "Nome: ";
+            gets(l[i].nome);
+
+            cout << "Quantidade emprestado: ";
+            cin >> l[i].quantidade_emprestada;
+
+            lerData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
+            imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
+
+            cout << "Id Pessoa emprestado: ";
+            cin >> idPessoa;
+            while(!buscarPessoa(p, idPessoa, indexPessoa) && idPessoa != 0){
+                cout << "Id Pessoa emprestado: ";
+                cin >> idPessoa; 
+            }
+            l[i].id_pessoa_emprestado = idPessoa;
+
+            cout << "Id Autor: ";
+            cin >> idAutor;
+            while(!buscarAutor(a, idAutor, indexAutor)){
+                cout << "Id Autor: ";
+                cin >> idAutor;
+            }
+            l[i].id_autor = idAutor;
+
+        }
+        else
+            saida = 0;
 
     }
+    indexLivro = i - 1;
+
 }
 
 void incluirPessoa(Pessoa p[], int & index, int quantidade)
@@ -373,6 +407,32 @@ bool buscarPessoa(Pessoa p[], int id, int index)
 
     if(id == p[m].id){
         cout << p[m].id << " " << p[m].nome << " - " << p[m].endereco <<endl;
+        return true;
+    }else{
+        cout << "Pessoa nao encontrada" << endl;
+        return false;
+    }
+}
+
+bool buscarAutor(Autor a[], int id, int index)
+{
+   int i = 0, f = index;
+
+    int m = (i + f) / 2;
+    for (;a[m].id != id && i <= f; m = (i + f) / 2){
+        
+        if (a[m].id > id){
+            f = m - 1;
+        }
+
+        else{
+            i = m + 1;
+        }
+
+    }
+
+    if(id == a[m].id){
+        cout << a[m].id << " " << a[m].nome << " - " << endl;
         return true;
     }else{
         cout << "Pessoa nao encontrada" << endl;
