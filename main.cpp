@@ -61,6 +61,7 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
  * Funções de inclusão
  */
 void incluirPessoa(Pessoa p[], int &index, int quantidade);
+void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero);
 
 
 /*
@@ -112,16 +113,16 @@ int main()
     int indexPessoas = 0;
     
     Editora editoras[QUANTIDADE];
-    int indexEditoras;
+    int indexEditoras = 0;
 
     Autor autores[QUANTIDADE];
-    int indexAutores;
+    int indexAutores = 0;
 
     Genero generos[QUANTIDADE];
-    int indexGeneros;
+    int indexGeneros = 0;
     
     Livro livros[QUANTIDADE];
-    int indexLivros;
+    int indexLivros = 0;
 
     char op = 'x';
     while (op != '0')
@@ -136,7 +137,8 @@ int main()
         cout << "[4] - [Adicionar Generos]\n";
         cout << "[5] - [Adicionar Livros]\n";
         cout << "[6] - [Incluir Pessoas]\n";
-        cout << "[7] - [imprimir Pessoas]\n";
+        cout << "[7] - [Incluir Livros]\n";
+        cout << "[8] - [imprimir Pessoas]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -182,6 +184,12 @@ int main()
         }
         case '7':
         {
+
+            incluirLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras, generos, indexGeneros);
+            break;
+        }
+        case '8':
+        {
             imprimirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
@@ -199,7 +207,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade)
 {
 
     cout << "Inserindo Pessoas\n";
-    int i = 0;
+    int i = index;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
         cout << "\n\nId: ";
@@ -221,7 +229,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade)
 void lerEditora(Editora e[], int &index, int quantidade)
 {
     cout << "Inserindo Editoras\n";
-    int i = 0;
+    int i = index;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
         cout << "\n\nId: ";
@@ -241,7 +249,7 @@ void lerEditora(Editora e[], int &index, int quantidade)
 void lerAutor(Autor a[], int &index, int quantidade)
 {
     cout << "Inserindo Autores\n";
-    int i = 0;
+    int i = index;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
         cout << "\n\nId: ";
@@ -261,7 +269,7 @@ void lerAutor(Autor a[], int &index, int quantidade)
 void lerGenero(Genero g[], int &index, int quantidade)
 {
     cout << "Inserindo Genero\n";
-    int i = 0;
+    int i = index;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
         cout << "\n\nId: ";
@@ -281,7 +289,7 @@ void lerGenero(Genero g[], int &index, int quantidade)
 void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
 {
     cout << "Inserindo Livros\n";
-    int i = 0;
+    int i = indexLivro;
     int id;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
@@ -394,6 +402,94 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)
     index = k;
 
 
+}
+
+void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
+{
+    Livro lNova[quantidade];
+    int indexNova;
+    lerLivro(lNova, indexNova, quantidade, p, indexPessoa, au, indexAutor, e, indexEditora, g, indexGenero);
+
+
+    Livro a[quantidade];
+
+
+    int i = 0, j = 0, k = 0;
+    for (; i < index && j < indexNova; k++){
+        if(l[i].id < lNova[j].id){
+            a[k].id = l[i].id;
+            strcpy(a[k].nome, l[i].nome);
+            a[k].id_editora = l[k].id_editora;
+            a[k].id_autor = l[k].id_autor;
+            a[k].id_genero = l[k].id_genero;
+            a[k].quantidade_emprestada = l[k].quantidade_emprestada;
+            a[k].id_pessoa_emprestado = l[k].id_pessoa_emprestado;
+            a[k].data_ultimo_emprestimo.dia = l[k].data_ultimo_emprestimo.dia;
+            a[k].data_ultimo_emprestimo.mes = l[k].data_ultimo_emprestimo.mes;
+            a[k].data_ultimo_emprestimo.ano = l[k].data_ultimo_emprestimo.ano;
+            i++;
+        }else{
+            a[k].id = lNova[j].id;
+            strcpy(a[k].nome, lNova[j].nome);
+            a[k].id_editora = lNova[j].id_editora;
+            a[k].id_autor = lNova[j].id_autor;
+            a[k].id_genero = lNova[j].id_genero;
+            a[k].quantidade_emprestada = lNova[j].quantidade_emprestada;
+            a[k].id_pessoa_emprestado = lNova[j].id_pessoa_emprestado;
+            a[k].data_ultimo_emprestimo.dia = lNova[j].data_ultimo_emprestimo.dia;
+            a[k].data_ultimo_emprestimo.mes = lNova[j].data_ultimo_emprestimo.mes;
+            a[k].data_ultimo_emprestimo.ano = lNova[j].data_ultimo_emprestimo.ano;
+            j++;
+        }
+    }
+
+    while (i < index){
+        a[k].id = l[i].id;
+        strcpy(a[k].nome, l[i].nome);
+        a[k].id_editora = l[k].id_editora;
+        a[k].id_autor = l[k].id_autor;
+        a[k].id_genero = l[k].id_genero;
+        a[k].quantidade_emprestada = l[k].quantidade_emprestada;
+        a[k].id_pessoa_emprestado = l[k].id_pessoa_emprestado;
+        a[k].data_ultimo_emprestimo.dia = l[k].data_ultimo_emprestimo.dia;
+        a[k].data_ultimo_emprestimo.mes = l[k].data_ultimo_emprestimo.mes;
+        a[k].data_ultimo_emprestimo.ano = l[k].data_ultimo_emprestimo.ano;
+
+        i++;
+        k++;
+    }
+
+    while(j < indexNova){
+        a[k].id = lNova[j].id;
+        strcpy(a[k].nome, lNova[j].nome);
+        a[k].id_editora = lNova[j].id_editora;
+        a[k].id_autor = lNova[j].id_autor;
+        a[k].id_genero = lNova[j].id_genero;
+        a[k].quantidade_emprestada = lNova[j].quantidade_emprestada;
+        a[k].id_pessoa_emprestado = lNova[j].id_pessoa_emprestado;
+        a[k].data_ultimo_emprestimo.dia = lNova[j].data_ultimo_emprestimo.dia;
+        a[k].data_ultimo_emprestimo.mes = lNova[j].data_ultimo_emprestimo.mes;
+        a[k].data_ultimo_emprestimo.ano = lNova[j].data_ultimo_emprestimo.ano;
+
+        j++;
+        k++;
+    }
+    
+
+
+    for (int i = 0; i < k; i++){
+        l[i].id = a[i].id;
+        strcpy(l[i].nome, a[i].nome);
+        l[i].id_editora = a[i].id_editora;
+        l[i].id_autor = a[i].id_autor;
+        l[i].id_genero = a[i].id_genero;
+        l[i].quantidade_emprestada = a[i].quantidade_emprestada;
+        l[i].id_pessoa_emprestado = a[i].id_pessoa_emprestado;
+        l[i].data_ultimo_emprestimo.dia = a[i].data_ultimo_emprestimo.dia;
+        l[i].data_ultimo_emprestimo.mes = a[i].data_ultimo_emprestimo.mes;
+        l[i].data_ultimo_emprestimo.ano = a[i].data_ultimo_emprestimo.ano;
+    }
+    index = k;
 }
 
 void imprimirPessoa(Pessoa p[], int index ,int quantidade)
