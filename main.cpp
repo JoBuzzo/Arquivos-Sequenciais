@@ -54,7 +54,7 @@ void lerPessoa(Pessoa p[], int &index, int quantidade);
 void lerEditora(Editora e[], int &index, int quantidade);
 void lerAutor(Autor a[], int &index, int quantidade);
 void lerGenero(Genero g[], int &index, int quantidade);
-void lerLivro(Livro l[], int &index, int quantidade);
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa);
 
 
 /*
@@ -63,6 +63,17 @@ void lerLivro(Livro l[], int &index, int quantidade);
 void incluirPessoa(Pessoa p[], int &index, int quantidade);
 
 
+/*
+ * Funções de impressão
+ */
+void imprimirPessoa(Pessoa p[], int index, int quantidade);
+
+
+/*
+ * Funções de busca
+ */
+
+bool buscarPessoa(Pessoa p[], int id, int index);
 
 
 void lerData(int &dia, int &mes, int &ano){
@@ -96,7 +107,7 @@ int main()
     const int QUANTIDADE = 1000;
 
     Pessoa pessoas[QUANTIDADE];
-    int indexPessoas;
+    int indexPessoas = 0;
     
     Editora editoras[QUANTIDADE];
     int indexEditoras;
@@ -123,6 +134,7 @@ int main()
         cout << "[4] - [Adicionar Generos]\n";
         cout << "[5] - [Adicionar Livros]\n";
         cout << "[6] - [Incluir Pessoas]\n";
+        cout << "[7] - [imprimir Pessoas]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -158,12 +170,17 @@ int main()
         }
         case '5':
         {
-            lerLivro(livros, indexLivros, QUANTIDADE);
+            lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas);
             break;
         }
         case '6':
         {
             incluirPessoa(pessoas, indexPessoas, QUANTIDADE);
+            break;
+        }
+        case '7':
+        {
+            imprimirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
         default:
@@ -259,41 +276,22 @@ void lerGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void lerLivro(Livro l[], int &index, int quantidade)
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa)
 {
     cout << "Inserindo Livros\n";
     int i = 0;
+    int idPessoa;
     for (int saida = 1; i < quantidade && saida != 0; i++)
     {
-        cout << "\n\nId: ";
-        cin >> l[i].id;
-        fflush(stdin);
-        if (l[i].id > 0)
-        {
-            cout << "Nome: ";
-            gets(l[i].nome);
-            cout << "Id Editora: ";
-            cin >> l[i].id_editora;
-            cout << "Id Autor: ";
-            cin >> l[i].id_autor;
-            cout << "Id Genero: ";
-            cin >> l[i].id_genero;
-            cout << "Id Pessoa emprestado: ";
-            cin >> l[i].id_pessoa_emprestado;
-            cout << "Quantidade de vezes emprestado: ";
-            cin >> l[i].quantidade_emprestada;
 
-            cout << "Data do ultimo emprestimo";
-            lerData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
-            imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
-        }
-        else
-            saida = 0;
+        cout << "Id Pessoa emprestado: ";
+        cin >> idPessoa;
+        buscarPessoa(p, idPessoa, indexPessoa);
+
     }
-    index = i - 1;
 }
 
-void incluirPessoa(Pessoa p[], int & index, int quantidade)  //testar
+void incluirPessoa(Pessoa p[], int & index, int quantidade)
 {
     Pessoa pNova[quantidade];
     int indexNova;
@@ -304,30 +302,32 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)  //testar
 
     int i = 0, j = 0, k = 0;
     for (; i < index && j < indexNova; k++){
-        if(p[i].id < pNova[i].id){
-            a[i].id = p[i].id;
-            strcpy(a[i].nome, p[i].nome);
-            strcpy(a[i].endereco, p[i].endereco);
+        if(p[i].id < pNova[j].id){
+            a[k].id = p[i].id;
+            strcpy(a[k].nome, p[i].nome);
+            strcpy(a[k].endereco, p[i].endereco);
+            i++;
         }else{
-            a[i].id = pNova[i].id;
-            strcpy(a[i].nome, pNova[i].nome);
-            strcpy(a[i].endereco, pNova[i].endereco);
+            a[k].id = pNova[j].id;
+            strcpy(a[k].nome, pNova[j].nome);
+            strcpy(a[k].endereco, pNova[j].endereco);
+            j++;
         }
     }
 
     while (i < index){
-        a[i].id = p[i].id;
-        strcpy(a[i].nome, p[i].nome);
-        strcpy(a[i].endereco, p[i].endereco);
+        a[k].id = p[i].id;
+        strcpy(a[k].nome, p[i].nome);
+        strcpy(a[k].endereco, p[i].endereco);
 
         i++;
         k++;
     }
 
     while(j < indexNova){
-        a[i].id = pNova[j].id;
-        strcpy(a[i].nome, pNova[j].nome);
-        strcpy(a[i].endereco, pNova[j].endereco);
+        a[k].id = pNova[j].id;
+        strcpy(a[k].nome, pNova[j].nome);
+        strcpy(a[k].endereco, pNova[j].endereco);
 
         j++;
         k++;
@@ -343,6 +343,39 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)  //testar
     index = k;
 
 
+}
 
+void imprimirPessoa(Pessoa p[], int index ,int quantidade)
+{
+    for (int i = 0; i < index && i < quantidade; i++)
+    {
+        cout << p[i].id << " " << p[i].nome << " - " << p[i].endereco <<endl;
+    }
+    
+}
 
+bool buscarPessoa(Pessoa p[], int id, int index)
+{
+    int i = 0, f = index;
+
+    int m = (i + f) / 2;
+    for (;p[m].id != id && i <= f; m = (i + f) / 2){
+        
+        if (p[m].id > id){
+            f = m - 1;
+        }
+
+        else{
+            i = m + 1;
+        }
+
+    }
+
+    if(id == p[m].id){
+        cout << p[m].id << " " << p[m].nome << " - " << p[m].endereco <<endl;
+        return true;
+    }else{
+        cout << "Pessoa nao encontrada" << endl;
+        return false;
+    }
 }
