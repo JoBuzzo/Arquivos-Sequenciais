@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include <string.h>
 
 using namespace std;
@@ -27,7 +28,12 @@ struct Genero
     int id;
     char descricao[40];
 };
-
+struct Data
+{
+    int dia;
+    int mes;
+    int ano;
+};
 struct Livro
 {
     int id;
@@ -37,15 +43,8 @@ struct Livro
     int id_genero;
     int id_pessoa_emprestado;
     int quantidade_emprestada;
-    struct Data
-    {
-        int dia;
-        int mes;
-        int ano;
-    } data_ultimo_emprestimo;
+    Data data_ultimo_emprestimo;
 };
-
-
 
 /*
  * Funções de inserção
@@ -54,15 +53,13 @@ void lerPessoa(Pessoa p[], int &index, int quantidade);
 void lerEditora(Editora e[], int &index, int quantidade);
 void lerAutor(Autor a[], int &index, int quantidade);
 void lerGenero(Genero g[], int &index, int quantidade);
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero);
-
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora, Genero g[], int indexGenero);
 
 /*
  * Funções de inclusão
  */
 void incluirPessoa(Pessoa p[], int &index, int quantidade);
-void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero);
-
+void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora, Genero g[], int indexGenero);
 
 /*
  * Funções de impressão
@@ -70,40 +67,66 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
 void imprimirPessoa(Pessoa p[], int index, int quantidade);
 void imprimirLivro(Livro l[], int index, int quantidade);
 
-
 /*
  * Funções de busca
  */
-
 bool buscarPessoa(Pessoa p[], int id, int index);
 bool buscarAutor(Autor a[], int id, int index);
 bool buscarEditora(Editora e[], int id, int index);
 bool buscarGenero(Genero g[], int id, int index);
+bool buscarLivro(Livro l[], int id, int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, int &emprestado);
 
-void lerData(int &dia, int &mes, int &ano){
-    cout << "\nInforme o dia: ";
-    cin >> dia;
-    cout << "Informe o mes: ";
-    cin >> mes;
-    cout << "Informe o ano: ";
-    cin >> ano;
+void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa);
+
+
+/*
+ * Funções de Data
+*/
+void dataAtual(Data &data)
+{
+    time_t timer;
+    struct tm *horarioLocal;
+
+    time(&timer);
+    horarioLocal = localtime(&timer);
+
+    data.dia = horarioLocal->tm_mday;
+    data.mes = horarioLocal->tm_mon + 1;
+    data.ano = horarioLocal->tm_year + 1900;
+
 }
-
-void imprimirData(int &dia, int &mes, int &ano)
+void lerData(Data &data)
+{
+    cout << "\nInforme o dia: ";
+    cin >> data.dia;
+    cout << "Informe o mes: ";
+    cin >> data.mes;
+    cout << "Informe o ano: ";
+    cin >> data.ano;
+}
+void imprimirData(Data data)
 {
 
-    if(dia < 10){
-        cout << 0 << dia << "/";
-    }else{
-        cout << dia << "/";
+    if (data.dia < 10)
+    {
+        cout << 0 << data.dia << "/";
     }
-    if (mes < 10){
-        cout << 0 << mes << "/";
-    }else {
-        cout << mes << "/";
+    else
+    {
+        cout << data.dia << "/";
     }
-    cout << ano << endl;
+    if (data.mes < 10)
+    {
+        cout << 0 << data.mes << "/";
+    }
+    else
+    {
+        cout << data.mes << "/";
+    }
+    cout << data.ano << endl;
 }
+
+
 
 int main()
 {
@@ -112,7 +135,7 @@ int main()
 
     Pessoa pessoas[QUANTIDADE];
     int indexPessoas = 0;
-    
+
     Editora editoras[QUANTIDADE];
     int indexEditoras = 0;
 
@@ -121,7 +144,7 @@ int main()
 
     Genero generos[QUANTIDADE];
     int indexGeneros = 0;
-    
+
     Livro livros[QUANTIDADE];
     int indexLivros = 0;
 
@@ -132,15 +155,16 @@ int main()
 
         cout << "Menu de opcoes\n\n";
         cout << "[0] - [Sair]\n";
-        cout << "[1] - [Adicionar Pessoas]\n";
-        cout << "[2] - [Adicionar Editoras]\n";
-        cout << "[3] - [Adicionar Autores]\n";
-        cout << "[4] - [Adicionar Generos]\n";
-        cout << "[5] - [Adicionar Livros]\n";
-        cout << "[6] - [Incluir Pessoas]\n";
-        cout << "[7] - [Incluir Livros]\n";
-        cout << "[8] - [imprimir Pessoas]\n";
-        cout << "[9] - [imprimir Livros]\n";
+        cout << "[a] - [Adicionar Pessoas]\n";
+        cout << "[b] - [Adicionar Editoras]\n";
+        cout << "[c] - [Adicionar Autores]\n";
+        cout << "[d] - [Adicionar Generos]\n";
+        cout << "[e] - [Adicionar Livros]\n";
+        cout << "[f] - [Incluir Pessoas]\n";
+        cout << "[g] - [Incluir Livros]\n";
+        cout << "[h] - [imprimir Pessoas]\n";
+        cout << "[i] - [imprimir Livros]\n";
+        cout << "[j] - [Emprestar Livros]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -154,50 +178,55 @@ int main()
             cout << "Saindo...\n";
             break;
         }
-        case '1':
+        case 'a':
         {
             lerPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
-        case '2':
+        case 'b':
         {
             lerEditora(editoras, indexEditoras, QUANTIDADE);
             break;
         }
-        case '3':
+        case 'c':
         {
             lerAutor(autores, indexAutores, QUANTIDADE);
             break;
         }
-        case '4':
+        case 'd':
         {
             lerGenero(generos, indexGeneros, QUANTIDADE);
             break;
         }
-        case '5':
+        case 'e':
         {
             lerLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras, generos, indexGeneros);
             break;
         }
-        case '6':
+        case 'f':
         {
             incluirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
-        case '7':
+        case 'g':
         {
 
             incluirLivro(livros, indexLivros, QUANTIDADE, pessoas, indexPessoas, autores, indexAutores, editoras, indexEditoras, generos, indexGeneros);
             break;
         }
-        case '8':
+        case 'h':
         {
             imprimirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
-        case '9':
+        case 'i':
         {
             imprimirLivro(livros, indexLivros, QUANTIDADE);
+            break;
+        }
+        case 'j':
+        {
+            emprestarLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
             break;
         }
         default:
@@ -293,7 +322,7 @@ void lerGenero(Genero g[], int &index, int quantidade)
     index = i - 1;
 }
 
-void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
+void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora, Genero g[], int indexGenero)
 {
     cout << "Inserindo Livros\n";
     int i = indexLivro;
@@ -313,20 +342,22 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
             cout << "Quantidade emprestado: ";
             cin >> l[i].quantidade_emprestada;
 
-            lerData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
-            imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
+            lerData(l[i].data_ultimo_emprestimo);
+            imprimirData(l[i].data_ultimo_emprestimo);
 
             cout << "Id Pessoa emprestado: ";
             cin >> id;
-            while(!buscarPessoa(p, id, indexPessoa) && id != 0){
+            while (!buscarPessoa(p, id, indexPessoa) && id != 0)
+            {
                 cout << "Id Pessoa emprestado: ";
-                cin >> id; 
+                cin >> id;
             }
             l[i].id_pessoa_emprestado = id;
 
             cout << "Id Autor: ";
             cin >> id;
-            while(!buscarAutor(a, id, indexAutor)){
+            while (!buscarAutor(a, id, indexAutor))
+            {
                 cout << "Id Autor: ";
                 cin >> id;
             }
@@ -334,7 +365,8 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
 
             cout << "Id Editora: ";
             cin >> id;
-            while(!buscarEditora(e, id, indexEditora)){
+            while (!buscarEditora(e, id, indexEditora))
+            {
                 cout << "Id Editora: ";
                 cin >> id;
             }
@@ -342,38 +374,39 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
 
             cout << "Id Genero: ";
             cin >> id;
-            while(!buscarGenero(g, id, indexGenero)){
+            while (!buscarGenero(g, id, indexGenero))
+            {
                 cout << "Id Genero: ";
                 cin >> id;
             }
             l[i].id_genero = id;
-
         }
         else
             saida = 0;
-
     }
     indexLivro = i - 1;
-
 }
 
-void incluirPessoa(Pessoa p[], int & index, int quantidade)
+void incluirPessoa(Pessoa p[], int &index, int quantidade)
 {
     Pessoa pNova[quantidade];
     int indexNova = 0;
     lerPessoa(pNova, indexNova, quantidade);
 
-
     Pessoa a[quantidade];
 
     int i = 0, j = 0, k = 0;
-    for (; i < index && j < indexNova; k++){
-        if(p[i].id < pNova[j].id){
+    for (; i < index && j < indexNova; k++)
+    {
+        if (p[i].id < pNova[j].id)
+        {
             a[k].id = p[i].id;
             strcpy(a[k].nome, p[i].nome);
             strcpy(a[k].endereco, p[i].endereco);
             i++;
-        }else{
+        }
+        else
+        {
             a[k].id = pNova[j].id;
             strcpy(a[k].nome, pNova[j].nome);
             strcpy(a[k].endereco, pNova[j].endereco);
@@ -381,7 +414,8 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)
         }
     }
 
-    while (i < index){
+    while (i < index)
+    {
         a[k].id = p[i].id;
         strcpy(a[k].nome, p[i].nome);
         strcpy(a[k].endereco, p[i].endereco);
@@ -390,7 +424,8 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)
         k++;
     }
 
-    while(j < indexNova){
+    while (j < indexNova)
+    {
         a[k].id = pNova[j].id;
         strcpy(a[k].nome, pNova[j].nome);
         strcpy(a[k].endereco, pNova[j].endereco);
@@ -398,32 +433,29 @@ void incluirPessoa(Pessoa p[], int & index, int quantidade)
         j++;
         k++;
     }
-    
 
-
-    for (int i = 0; i < k; i++){
+    for (int i = 0; i < k; i++)
+    {
         p[i].id = a[i].id;
         strcpy(p[i].nome, a[i].nome);
         strcpy(p[i].endereco, a[i].endereco);
     }
     index = k;
-
-
 }
 
-void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora,  Genero g[], int indexGenero)
+void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPessoa, Autor au[], int indexAutor, Editora e[], int indexEditora, Genero g[], int indexGenero)
 {
     Livro lNova[quantidade];
     int indexNova = 0;
     lerLivro(lNova, indexNova, quantidade, p, indexPessoa, au, indexAutor, e, indexEditora, g, indexGenero);
 
-
     Livro a[quantidade];
 
-
     int i = 0, j = 0, k = 0;
-    for (; i < index && j < indexNova; k++){
-        if(l[i].id < lNova[j].id){
+    for (; i < index && j < indexNova; k++)
+    {
+        if (l[i].id < lNova[j].id)
+        {
             a[k].id = l[i].id;
             strcpy(a[k].nome, l[i].nome);
             a[k].id_editora = l[k].id_editora;
@@ -435,7 +467,9 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
             a[k].data_ultimo_emprestimo.mes = l[k].data_ultimo_emprestimo.mes;
             a[k].data_ultimo_emprestimo.ano = l[k].data_ultimo_emprestimo.ano;
             i++;
-        }else{
+        }
+        else
+        {
             a[k].id = lNova[j].id;
             strcpy(a[k].nome, lNova[j].nome);
             a[k].id_editora = lNova[j].id_editora;
@@ -450,7 +484,8 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
         }
     }
 
-    while (i < index){
+    while (i < index)
+    {
         a[k].id = l[i].id;
         strcpy(a[k].nome, l[i].nome);
         a[k].id_editora = l[k].id_editora;
@@ -466,7 +501,8 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
         k++;
     }
 
-    while(j < indexNova){
+    while (j < indexNova)
+    {
         a[k].id = lNova[j].id;
         strcpy(a[k].nome, lNova[j].nome);
         a[k].id_editora = lNova[j].id_editora;
@@ -481,10 +517,9 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
         j++;
         k++;
     }
-    
 
-
-    for (int i = 0; i < k; i++){
+    for (int i = 0; i < k; i++)
+    {
         l[i].id = a[i].id;
         strcpy(l[i].nome, a[i].nome);
         l[i].id_editora = a[i].id_editora;
@@ -499,50 +534,56 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
     index = k;
 }
 
-void imprimirPessoa(Pessoa p[], int index ,int quantidade)
+void imprimirPessoa(Pessoa p[], int index, int quantidade)
 {
     for (int i = 0; i < index && i < quantidade; i++)
     {
-        cout << p[i].id << " " << p[i].nome << " - " << p[i].endereco <<endl;
+        cout << p[i].id << " " << p[i].nome << " - " << p[i].endereco << endl;
     }
-    
 }
 
 void imprimirLivro(Livro l[], int index, int quantidade)
 {
     for (int i = 0; i < index && i < quantidade; i++)
     {
-        cout << "Id: " << l[i].id << endl << endl;
+        cout << "Id: " << l[i].id << endl
+             << endl;
         cout << "Nome: " << l[i].nome << endl;
         cout << "Qauntidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
-        imprimirData(l[i].data_ultimo_emprestimo.dia, l[i].data_ultimo_emprestimo.mes, l[i].data_ultimo_emprestimo.ano);
+        imprimirData(l[i].data_ultimo_emprestimo);
     }
 }
 
 bool buscarPessoa(Pessoa p[], int id, int index)
 {
-    if(id == 0){
+    if (id == 0)
+    {
         return false;
     }
     int i = 0, f = index;
 
     int m = (i + f) / 2;
-    for (;p[m].id != id && i <= f; m = (i + f) / 2){
-        
-        if (p[m].id > id){
+    for (; p[m].id != id && i <= f; m = (i + f) / 2)
+    {
+
+        if (p[m].id > id)
+        {
             f = m - 1;
         }
 
-        else{
+        else
+        {
             i = m + 1;
         }
-
     }
 
-    if(id == p[m].id){
-        cout << p[m].id << " " << p[m].nome << " - " << p[m].endereco <<endl;
+    if (id == p[m].id)
+    {
+        cout << p[m].id << " " << p[m].nome << " - " << p[m].endereco << endl;
         return true;
-    }else{
+    }
+    else
+    {
         cout << "Pessoa nao encontrada" << endl;
         return false;
     }
@@ -550,28 +591,34 @@ bool buscarPessoa(Pessoa p[], int id, int index)
 
 bool buscarAutor(Autor a[], int id, int index)
 {
-    if(id == 0){
+    if (id == 0)
+    {
         return false;
     }
-   int i = 0, f = index;
+    int i = 0, f = index;
 
     int m = (i + f) / 2;
-    for (;a[m].id != id && i <= f; m = (i + f) / 2){
-        
-        if (a[m].id > id){
+    for (; a[m].id != id && i <= f; m = (i + f) / 2)
+    {
+
+        if (a[m].id > id)
+        {
             f = m - 1;
         }
 
-        else{
+        else
+        {
             i = m + 1;
         }
-
     }
 
-    if(id == a[m].id){
+    if (id == a[m].id)
+    {
         cout << a[m].id << " " << a[m].nome << endl;
         return true;
-    }else{
+    }
+    else
+    {
         cout << "Autor nao encontrada" << endl;
         return false;
     }
@@ -579,28 +626,34 @@ bool buscarAutor(Autor a[], int id, int index)
 
 bool buscarEditora(Editora e[], int id, int index)
 {
-    if(id == 0){
+    if (id == 0)
+    {
         return false;
     }
     int i = 0, f = index;
 
     int m = (i + f) / 2;
-    for (;e[m].id != id && i <= f; m = (i + f) / 2){
-        
-        if (e[m].id > id){
+    for (; e[m].id != id && i <= f; m = (i + f) / 2)
+    {
+
+        if (e[m].id > id)
+        {
             f = m - 1;
         }
 
-        else{
+        else
+        {
             i = m + 1;
         }
-
     }
 
-    if(id == e[m].id){
+    if (id == e[m].id)
+    {
         cout << e[m].id << " " << e[m].nome << endl;
         return true;
-    }else{
+    }
+    else
+    {
         cout << "Editora nao encontrada" << endl;
         return false;
     }
@@ -608,29 +661,109 @@ bool buscarEditora(Editora e[], int id, int index)
 
 bool buscarGenero(Genero g[], int id, int index)
 {
-    if(id == 0){
+    if (id == 0)
+    {
         return false;
     }
     int i = 0, f = index;
 
     int m = (i + f) / 2;
-    for (;g[m].id != id && i <= f; m = (i + f) / 2){
-        
-        if (g[m].id > id){
+    for (; g[m].id != id && i <= f; m = (i + f) / 2)
+    {
+
+        if (g[m].id > id)
+        {
             f = m - 1;
         }
 
-        else{
+        else
+        {
             i = m + 1;
         }
-
     }
 
-    if(id == g[m].id){
-        cout << g[m].id << " " << g[m].descricao  << endl;
+    if (id == g[m].id)
+    {
+        cout << g[m].id << " " << g[m].descricao << endl;
         return true;
-    }else{
+    }
+    else
+    {
         cout << "Genero nao encontrada" << endl;
         return false;
+    }
+}
+
+bool buscarLivro(Livro l[], int id, int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, int &index)
+{
+    if (id == 0)
+    {
+        return false;
+    }
+    int i = 0, f = indexLivro;
+
+    int m = (i + f) / 2;
+    for (; l[m].id != id && i <= f; m = (i + f) / 2)
+    {
+
+        if (l[m].id > id)
+        {
+            f = m - 1;
+        }
+
+        else
+        {
+            i = m + 1;
+        }
+    }
+    if (id == l[m].id)
+    {
+        index = m;
+        cout << l[m].nome << endl;
+
+        buscarAutor(a, l[m].id_autor, indexAutor);
+        buscarEditora(e, l[m].id_editora, indexEditora);
+        return true;
+    }
+    else
+    {
+        index = -1;
+        cout << "livro nao encontrado" << endl;
+        return false;
+    }
+}
+
+void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa)
+{
+    int id;
+    cout << "Informe o id de um livro: ";
+    cin >> id;
+    int index;
+    buscarLivro(l, id, indexLivro, a, indexAutor, e, indexEditora, index);
+
+    if (index != -1)
+    {
+
+        if (l[index].id_pessoa_emprestado > 0)
+        {
+            cout << "Livro ja emprestado" << endl;
+            // fazer a logica de imprimir a data disponivel
+        }
+        else
+        {
+            cout << "Informe o id da Pessoa que deseja emprestar o livro: ";
+            cin >> id;
+
+            if (buscarPessoa(p, id, indexPessoa))
+            {
+                l[index].id_pessoa_emprestado = id;
+                l[index].quantidade_emprestada++;
+                dataAtual(l[index].data_ultimo_emprestimo);
+
+                cout << "Livro emprestado com sucesso" << endl;         
+            }else{
+                cout << "Pessoa nao encontrada" << endl;
+            }
+        }
     }
 }
