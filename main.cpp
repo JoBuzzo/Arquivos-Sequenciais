@@ -10,19 +10,16 @@ struct Pessoa
     char nome[30];
     char endereco[60];
 };
-
 struct Editora
 {
     int id;
     char nome[30];
 };
-
 struct Autor
 {
     int id;
     char nome[30];
 };
-
 struct Genero
 {
     int id;
@@ -125,8 +122,23 @@ void imprimirData(Data data)
     }
     cout << data.ano << endl;
 }
+void dataDisponivel(Data data, Data& dataDisponivel)
+{
+    dataDisponivel.dia = data.dia + 5;
+    dataDisponivel.mes = data.mes;
+    dataDisponivel.ano = data.ano;
 
+    if (dataDisponivel.dia > 31) {
+        dataDisponivel.dia -= 31;
+        dataDisponivel.mes++;
+    }
 
+    if (dataDisponivel.mes > 12) {
+        dataDisponivel.mes = 1;
+        dataDisponivel.ano++;
+    }
+
+}
 
 int main()
 {
@@ -747,7 +759,11 @@ void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editor
         if (l[index].id_pessoa_emprestado > 0)
         {
             cout << "Livro ja emprestado" << endl;
-            // fazer a logica de imprimir a data disponivel
+            // fazer a logica de imprimir a data em que o livro ficara disponivel
+            Data disponivel;
+
+            dataDisponivel(l[index].data_ultimo_emprestimo, disponivel);
+            cout << "A data ficara disponivel: " ; imprimirData(disponivel); 
         }
         else
         {
