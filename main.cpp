@@ -73,8 +73,12 @@ bool buscarEditora(Editora e[], int id, int index);
 bool buscarGenero(Genero g[], int id, int index);
 bool buscarLivro(Livro l[], int id, int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, int &emprestado);
 
-void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa);
 
+/*
+ * Funções específicas de livro
+*/
+void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa);
+void devolverLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa);
 
 /*
  * Funções de Data
@@ -220,6 +224,7 @@ int main()
         cout << "[h] - [imprimir Pessoas]\n";
         cout << "[i] - [imprimir Livros]\n";
         cout << "[j] - [Emprestar Livros]\n";
+        cout << "[k] - [Devolver Livro]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -282,6 +287,11 @@ int main()
         case 'j':
         {
             emprestarLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
+            break;
+        }
+        case 'k':
+        {
+            devolverLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
             break;
         }
         default:
@@ -822,6 +832,36 @@ void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editor
             }else{
                 cout << "Pessoa nao encontrada" << endl;
             }
+        }
+    }
+}
+
+void devolverLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora e[], int indexEditora, Pessoa p[], int indexPessoa)
+{
+    int id;
+    cout << "Informe o id de um livro: ";
+    cin >> id;
+    int index;
+    char resposta;
+    buscarLivro(l, id, indexLivro, a, indexAutor, e, indexEditora, index);
+    if (index != -1){
+        if (l[index].id_pessoa_emprestado > 0)
+        {
+            buscarPessoa(p, l[index].id_pessoa_emprestado, indexPessoa);
+
+            fflush(stdin);
+            cout << "Informe a sua escolha [s/n]: ";
+            resposta = getchar();
+
+            if(resposta == 's'){
+                l[index].id_pessoa_emprestado = 0;
+                cout << "Livro devolvido com sucesso" << endl;
+            }else{
+                cout << "Livro nao devolvido, resposta nao confirmada" << endl;
+            }
+
+        }else{
+            cout << "O livro nao esta emprestado, nao e possivel realizar a devolucao" << endl;
         }
     }
 }
