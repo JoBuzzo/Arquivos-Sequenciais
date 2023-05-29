@@ -64,7 +64,7 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
 void imprimirPessoa(Pessoa p[], int index);
 void imprimirLivro(Livro l[], int index);
 void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa);
-void imprimirLivroAtrasado(Livro l[], int index);
+void imprimirLivroAtrasado(Livro l[], int index, Editora e[], int indexEditora, Autor a[], int indexAutor);
 /*
  * Funções de busca
  */
@@ -186,7 +186,21 @@ void dataDisponivel(Data data, Data& dataDisponivel)
         dataDisponivel.ano++;
     }
 }
+int calcularDiasAtraso(Data dataEmprestimo)
+{
+    int diasAtraso = 0;
+    Data hoje;
+    dataAtual(hoje);
 
+    if (dataEmprestimo.ano < hoje.ano)
+        diasAtraso = (hoje.ano - dataEmprestimo.ano) * 365;
+    if (dataEmprestimo.mes < hoje.mes)
+        diasAtraso += (hoje.mes - dataEmprestimo.mes) * 30;
+    if (dataEmprestimo.dia < hoje.dia)
+        diasAtraso += (hoje.dia - dataEmprestimo.dia);
+
+    return diasAtraso;
+}
 
 int main()
 {
@@ -304,7 +318,7 @@ int main()
         }
         case 'm':
         {
-            imprimirLivroAtrasado(livros, indexLivros);
+            imprimirLivroAtrasado(livros, indexLivros,  editoras, indexEditoras, autores, indexAutores);
             break;
         }
         default:
@@ -650,7 +664,7 @@ void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa)
             cout << "Nome: " << l[i].nome << endl;
             cout << "Quantidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
             buscarPessoa(p,l[i].id_pessoa_emprestado,indexPessoa);
-
+            cout << endl
             totalLivrosEmprestados++;
         }else{
             totalLivrosNaoEmprestados++;
@@ -661,21 +675,24 @@ void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa)
     cout << "Total de livros disponiveis: " << totalLivrosNaoEmprestados << endl;
 }
 
-void imprimirLivroAtrasado(Livro l[], int index)
+void imprimirLivroAtrasado(Livro l[], int index, Editora e[], int indexEditora, Autor a[], int indexAutor)
 {
-    Data data;
-    dataAtual(data);
-    cout << "Todos os Livros emprestados" << endl;
-    for (int i = 0; i < index && l[i].id_pessoa_emprestado != 0 ; i++)
+    cout << "Livros com emprestimo atrasado" << endl;
+
+    for (int i = 0; i < index; i++)
     {
-        cout << "Id: " << l[i].id << endl;
-        cout << "Nome: " << l[i].nome << endl;
-        cout << "Qauntidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
-        cout << "Id da pessoa emprestado: " << l[i].id_pessoa_emprestado << endl;
-        imprimirData(l[i].data_ultimo_emprestimo);
-        cout << "Id da editora: " << l[i].id_editora << endl;
-        cout << "Id da autor: " << l[i].id_autor << endl;
-        cout << "Id do genero: " << l[i].id << endl << endl;
+        int diasAtraso = calcularDiasAtraso( l[i].data_ultimo_emprestimo);
+
+        if (l[i].id_pessoa_emprestado != 0 && diasAtraso > 0)
+        {
+            cout << "Id: " << l[i].id << endl;
+            cout << "Nome: " << l[i].nome << endl;
+            imprimirData(l[i].data_ultimo_emprestimo);
+            cout << "Quantidade de dias em atraso: " << diasAtraso << endl << endl;
+
+            buscarAutor(a, l[i].id_autor, indexAutor);
+            buscarEditora(e, l[i].id_editora, indexEditora);
+        }
     }
 }
 
@@ -739,7 +756,7 @@ bool buscarAutor(Autor a[], int id, int index)
 
     if (id == a[m].id)
     {
-        cout << "Id: " << a[m].id << " Nome: " << a[m].nome << endl;
+        cout << "Autor - Id: " << a[m].id << " Nome: " << a[m].nome << endl;
         return true;
     }
     else
@@ -774,7 +791,7 @@ bool buscarEditora(Editora e[], int id, int index)
 
     if (id == e[m].id)
     {
-        cout << "Id: " << e[m].id << " nome: " << e[m].nome << endl;
+        cout << "Editora - Id: " << e[m].id << " nome: " << e[m].nome << endl;
         return true;
     }
     else
