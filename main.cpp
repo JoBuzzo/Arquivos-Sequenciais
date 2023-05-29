@@ -92,15 +92,6 @@ void dataAtual(Data &data)
     data.ano = horarioLocal->tm_year + 1900;
 
 }
-void lerData(Data &data)
-{
-    cout << "\nInforme o dia: ";
-    cin >> data.dia;
-    cout << "Informe o mes: ";
-    cin >> data.mes;
-    cout << "Informe o ano: ";
-    cin >> data.ano;
-}
 void imprimirData(Data data)
 {
 
@@ -122,14 +113,66 @@ void imprimirData(Data data)
     }
     cout << data.ano << endl;
 }
+bool anoBissexto(int ano) 
+{
+    return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
+}
+void lerData(Data& data) {
+    bool dataValida = false;
+
+    while (!dataValida) {
+        cout << "\nInforme o dia: ";
+        cin >> data.dia;
+        cout << "Informe o mes: ";
+        cin >> data.mes;
+        cout << "Informe o ano: ";
+        cin >> data.ano;
+
+        // Verifica se a data é válida
+        if (data.mes >= 1 && data.mes <= 12 && data.dia >= 1) {
+            int diasNoMes;
+
+            if (data.mes == 2) {
+                if (anoBissexto(data.ano))
+                    diasNoMes = 29;
+                else
+                    diasNoMes = 28;
+            } else if (data.mes == 4 || data.mes == 6 || data.mes == 9 || data.mes == 11) {
+                diasNoMes = 30;
+            } else {
+                diasNoMes = 31;
+            }
+
+            if (data.dia <= diasNoMes)
+                dataValida = true;
+        }
+
+        if (!dataValida) {
+            cout << "Data invalida. Por favor, insira novamente.\n";
+        }
+    }
+}
 void dataDisponivel(Data data, Data& dataDisponivel)
 {
     dataDisponivel.dia = data.dia + 5;
     dataDisponivel.mes = data.mes;
     dataDisponivel.ano = data.ano;
 
-    if (dataDisponivel.dia > 31) {
-        dataDisponivel.dia -= 31;
+    int diasNoMes;
+
+    if (dataDisponivel.mes == 2) {
+        if (anoBissexto(dataDisponivel.ano))
+            diasNoMes = 29;
+        else
+            diasNoMes = 28;
+    } else if (dataDisponivel.mes == 4 || dataDisponivel.mes == 6 || dataDisponivel.mes == 9 || dataDisponivel.mes == 11) {
+        diasNoMes = 30;
+    } else {
+        diasNoMes = 31;
+    }
+
+    if (dataDisponivel.dia > diasNoMes) {
+        dataDisponivel.dia -= diasNoMes;
         dataDisponivel.mes++;
     }
 
@@ -137,8 +180,8 @@ void dataDisponivel(Data data, Data& dataDisponivel)
         dataDisponivel.mes = 1;
         dataDisponivel.ano++;
     }
-
 }
+
 
 int main()
 {
@@ -759,7 +802,6 @@ void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editor
         if (l[index].id_pessoa_emprestado > 0)
         {
             cout << "Livro ja emprestado" << endl;
-            // fazer a logica de imprimir a data em que o livro ficara disponivel
             Data disponivel;
 
             dataDisponivel(l[index].data_ultimo_emprestimo, disponivel);
