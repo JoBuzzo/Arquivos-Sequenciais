@@ -61,9 +61,10 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
 /*
  * Funções de impressão
  */
-void imprimirPessoa(Pessoa p[], int index, int quantidade);
-void imprimirLivro(Livro l[], int index, int quantidade);
-
+void imprimirPessoa(Pessoa p[], int index);
+void imprimirLivro(Livro l[], int index);
+void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa);
+void imprimirLivroAtrasado(Livro l[], int index);
 /*
  * Funções de busca
  */
@@ -221,10 +222,12 @@ int main()
         cout << "[e] - [Adicionar Livros]\n";
         cout << "[f] - [Incluir Pessoas]\n";
         cout << "[g] - [Incluir Livros]\n";
-        cout << "[h] - [imprimir Pessoas]\n";
-        cout << "[i] - [imprimir Livros]\n";
-        cout << "[j] - [Emprestar Livros]\n";
-        cout << "[k] - [Devolver Livro]\n";
+        cout << "[h] - [Emprestar Livros]\n";
+        cout << "[i] - [Devolver Livro]\n";
+        cout << "[j] - [imprimir Pessoas]\n";
+        cout << "[k] - [imprimir Livros]\n";
+        cout << "[l] - [imprimir Livros Emprestados]\n";
+        cout << "[m] - [imprimir Livros atrasados]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -276,27 +279,37 @@ int main()
         }
         case 'h':
         {
-            imprimirPessoa(pessoas, indexPessoas, QUANTIDADE);
+            emprestarLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
             break;
         }
         case 'i':
         {
-            imprimirLivro(livros, indexLivros, QUANTIDADE);
+            devolverLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
             break;
         }
         case 'j':
         {
-            emprestarLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
+            imprimirPessoa(pessoas, indexPessoas);
             break;
         }
         case 'k':
         {
-            devolverLivro(livros, indexLivros, autores, indexAutores, editoras, indexEditoras, pessoas, indexPessoas);
+            imprimirLivro(livros, indexLivros);
+            break;
+        }
+        case 'l':
+        {
+            imprimirLivroEmprestado(livros, indexLivros, pessoas, indexPessoas);
+            break;
+        }
+        case 'm':
+        {
+            imprimirLivroAtrasado(livros, indexLivros);
             break;
         }
         default:
         {
-            cout << "Opcao invalida";
+            cout << "Opcao invalida " << endl;
             break;
         }
         }
@@ -599,23 +612,70 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
     index = k;
 }
 
-void imprimirPessoa(Pessoa p[], int index, int quantidade)
+void imprimirPessoa(Pessoa p[], int index)
 {
-    for (int i = 0; i < index && i < quantidade; i++)
+    for (int i = 0; i < index; i++)
     {
         cout << p[i].id << " " << p[i].nome << " - " << p[i].endereco << endl;
     }
 }
 
-void imprimirLivro(Livro l[], int index, int quantidade)
+void imprimirLivro(Livro l[], int index)
 {
-    for (int i = 0; i < index && i < quantidade; i++)
+    cout << "Todos os Livros" << endl;
+    for (int i = 0; i < index ; i++)
     {
-        cout << "Id: " << l[i].id << endl
-             << endl;
+        cout << "Id: " << l[i].id << endl;
         cout << "Nome: " << l[i].nome << endl;
         cout << "Qauntidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
+        cout << "Id da pessoa emprestado: " << l[i].id_pessoa_emprestado << endl;
         imprimirData(l[i].data_ultimo_emprestimo);
+        cout << "Id da editora: " << l[i].id_editora << endl;
+        cout << "Id da autor: " << l[i].id_autor << endl;
+        cout << "Id do genero: " << l[i].id << endl << endl;
+    }
+}
+
+void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa)
+{
+    cout << "Todos os Livros emprestados" << endl;
+    int totalLivrosEmprestados = 0;
+    int totalLivrosNaoEmprestados = 0;
+
+    for (int i = 0; i < index; i++)
+    {
+        if (l[i].id_pessoa_emprestado != 0)
+        {
+            cout << "Id: " << l[i].id << endl;
+            cout << "Nome: " << l[i].nome << endl;
+            cout << "Quantidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
+            buscarPessoa(p,l[i].id_pessoa_emprestado,indexPessoa);
+
+            totalLivrosEmprestados++;
+        }else{
+            totalLivrosNaoEmprestados++;
+        }
+    }
+
+    cout << "\nTotal de livros emprestados: " << totalLivrosEmprestados << endl;
+    cout << "Total de livros disponiveis: " << totalLivrosNaoEmprestados << endl;
+}
+
+void imprimirLivroAtrasado(Livro l[], int index)
+{
+    Data data;
+    dataAtual(data);
+    cout << "Todos os Livros emprestados" << endl;
+    for (int i = 0; i < index && l[i].id_pessoa_emprestado != 0 ; i++)
+    {
+        cout << "Id: " << l[i].id << endl;
+        cout << "Nome: " << l[i].nome << endl;
+        cout << "Qauntidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
+        cout << "Id da pessoa emprestado: " << l[i].id_pessoa_emprestado << endl;
+        imprimirData(l[i].data_ultimo_emprestimo);
+        cout << "Id da editora: " << l[i].id_editora << endl;
+        cout << "Id da autor: " << l[i].id_autor << endl;
+        cout << "Id do genero: " << l[i].id << endl << endl;
     }
 }
 
@@ -644,7 +704,7 @@ bool buscarPessoa(Pessoa p[], int id, int index)
 
     if (id == p[m].id)
     {
-        cout << p[m].id << " " << p[m].nome << " - " << p[m].endereco << endl;
+        cout << "Id: " << p[m].id << " nome: " << p[m].nome << " endereco: " << p[m].endereco << endl;
         return true;
     }
     else
@@ -679,7 +739,7 @@ bool buscarAutor(Autor a[], int id, int index)
 
     if (id == a[m].id)
     {
-        cout << a[m].id << " " << a[m].nome << endl;
+        cout << "Id: " << a[m].id << " Nome: " << a[m].nome << endl;
         return true;
     }
     else
@@ -714,7 +774,7 @@ bool buscarEditora(Editora e[], int id, int index)
 
     if (id == e[m].id)
     {
-        cout << e[m].id << " " << e[m].nome << endl;
+        cout << "Id: " << e[m].id << " nome: " << e[m].nome << endl;
         return true;
     }
     else
@@ -749,7 +809,7 @@ bool buscarGenero(Genero g[], int id, int index)
 
     if (id == g[m].id)
     {
-        cout << g[m].id << " " << g[m].descricao << endl;
+        cout << "Id: " << g[m].id << " Descricao: " << g[m].descricao << endl;
         return true;
     }
     else
@@ -784,7 +844,14 @@ bool buscarLivro(Livro l[], int id, int indexLivro, Autor a[], int indexAutor, E
     if (id == l[m].id)
     {
         index = m;
-        cout << l[m].nome << endl;
+        cout << "Id: " << l[m].id << endl;
+        cout << "Nome: " << l[m].nome << endl;
+        cout << "Qauntidade de vezes emprestado: " << l[m].quantidade_emprestada << endl;
+        cout << "Id da pessoa emprestado: " << l[m].id_pessoa_emprestado << endl;
+        cout << "Id da editora: " << l[m].id_editora << endl;
+        cout << "Id da autor: " << l[m].id_autor << endl;
+        cout << "Id do genero: " << l[m].id << endl;
+        imprimirData(l[m].data_ultimo_emprestimo);
 
         buscarAutor(a, l[m].id_autor, indexAutor);
         buscarEditora(e, l[m].id_editora, indexEditora);
@@ -811,15 +878,15 @@ void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editor
 
         if (l[index].id_pessoa_emprestado > 0)
         {
-            cout << "Livro ja emprestado" << endl;
+            cout << "\nLivro ja emprestado" << endl;
             Data disponivel;
 
             dataDisponivel(l[index].data_ultimo_emprestimo, disponivel);
-            cout << "A data ficara disponivel: " ; imprimirData(disponivel); 
+            cout << "\nA data ficara disponivel: " ; imprimirData(disponivel); 
         }
         else
         {
-            cout << "Informe o id da Pessoa que deseja emprestar o livro: ";
+            cout << "\nInforme o id da Pessoa que deseja emprestar o livro: ";
             cin >> id;
 
             if (buscarPessoa(p, id, indexPessoa))
@@ -828,9 +895,10 @@ void emprestarLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editor
                 l[index].quantidade_emprestada++;
                 dataAtual(l[index].data_ultimo_emprestimo);
 
-                cout << "Livro emprestado com sucesso" << endl;         
+                cout << "\nLivro emprestado com sucesso" << endl;
+                imprimirData(l[index].data_ultimo_emprestimo);
             }else{
-                cout << "Pessoa nao encontrada" << endl;
+                cout << "\nPessoa nao encontrada" << endl;
             }
         }
     }
@@ -850,18 +918,18 @@ void devolverLivro(Livro l[], int indexLivro, Autor a[], int indexAutor, Editora
             buscarPessoa(p, l[index].id_pessoa_emprestado, indexPessoa);
 
             fflush(stdin);
-            cout << "Informe a sua escolha [s/n]: ";
+            cout << "\nInforme a sua escolha [s/n]: ";
             resposta = getchar();
 
             if(resposta == 's'){
                 l[index].id_pessoa_emprestado = 0;
-                cout << "Livro devolvido com sucesso" << endl;
+                cout << "\nLivro devolvido com sucesso" << endl;
             }else{
-                cout << "Livro nao devolvido, resposta nao confirmada" << endl;
+                cout << "\nLivro nao devolvido, resposta nao confirmada" << endl;
             }
 
         }else{
-            cout << "O livro nao esta emprestado, nao e possivel realizar a devolucao" << endl;
+            cout << "\nO livro nao esta emprestado, nao e possivel realizar a devolucao" << endl;
         }
     }
 }
