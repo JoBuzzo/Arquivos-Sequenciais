@@ -65,6 +65,7 @@ void imprimirPessoa(Pessoa p[], int index);
 void imprimirLivro(Livro l[], int index);
 void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa);
 void imprimirLivroAtrasado(Livro l[], int index, Editora e[], int indexEditora, Autor a[], int indexAutor);
+
 /*
  * Funções de busca
  */
@@ -122,7 +123,8 @@ bool anoBissexto(int ano)
 {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
 }
-void lerData(Data& data) {
+void lerData(Data& data)
+{
     bool dataValida = false;
 
     while (!dataValida) {
@@ -791,7 +793,7 @@ bool buscarEditora(Editora e[], int id, int index)
 
     if (id == e[m].id)
     {
-        cout << "Editora - Id: " << e[m].id << " nome: " << e[m].nome << endl;
+        cout << "EditoraId: " << e[m].id << " nome: " << e[m].nome << endl;
         return true;
     }
     else
