@@ -53,6 +53,11 @@ void lerGenero(Genero g[], int &index, int quantidade);
 void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexPessoa, Autor a[], int indexAutor, Editora e[], int indexEditora, Genero g[], int indexGenero);
 
 /*
+ * Funções de exclusão
+*/
+void excluirPessoa(Pessoa p[], int &index, int quantidade);
+
+/*
  * Funções de inclusão
  */
 void incluirPessoa(Pessoa p[], int &index, int quantidade);
@@ -244,6 +249,7 @@ int main()
         cout << "[k] - [imprimir Livros]\n";
         cout << "[l] - [imprimir Livros Emprestados]\n";
         cout << "[m] - [imprimir Livros atrasados]\n";
+        cout << "[n] - [excluir Pessoas]\n";
 
         fflush(stdin);
         cout << "\n\nInforme a sua escolha: ";
@@ -321,6 +327,11 @@ int main()
         case 'm':
         {
             imprimirLivroAtrasado(livros, indexLivros,  editoras, indexEditoras, autores, indexAutores);
+            break;
+        }
+        case 'n':
+        {
+            excluirPessoa(pessoas, indexPessoas, QUANTIDADE);
             break;
         }
         default:
@@ -481,6 +492,48 @@ void lerLivro(Livro l[], int &indexLivro, int quantidade, Pessoa p[], int indexP
     indexLivro = i - 1;
 }
 
+void excluirPessoa(Pessoa p[], int &index, int quantidade)
+{
+
+    int i = 0, j = 0, k = 0;
+    int contT;
+    int id[quantidade];
+    Pessoa a[quantidade];
+    int saida = 1;
+    for (contT = 0 ; contT < index && saida != 0; contT++){
+        cout << "\nInforme o id do Registro a ser Excluido (finalize com 0): ";
+        cin >> id[contT];
+        if(id[contT] == 0) saida = 0;
+    }
+
+
+    for(; i < index; i++){
+        if(p[i].id != id[j]){
+            a[k].id = p[i].id;
+            strcpy(a[k].nome, p[i].nome);
+            strcpy(a[k].endereco, p[i].endereco);
+            k++;
+        }else j++;
+    }
+    while (i < index){
+        a[k].id = p[i].id;
+        strcpy(a[k].nome, p[i].nome);
+        strcpy(a[k].endereco, p[i].endereco);
+        i++;
+        k++;
+    }
+
+    for (int i = 0; i < k; i++)
+    {
+        p[i].id = a[i].id;
+        strcpy(p[i].nome, a[i].nome);
+        strcpy(p[i].endereco, a[i].endereco);
+    }
+    index = k;
+    cout << "\nRegistros excluidos com sucesso!" << endl;
+    
+}
+
 void incluirPessoa(Pessoa p[], int &index, int quantidade)
 {
     Pessoa pNova[quantidade];
@@ -627,7 +680,6 @@ void incluirLivro(Livro l[], int &index, int quantidade, Pessoa p[], int indexPe
     }
     index = k;
 }
-
 void imprimirPessoa(Pessoa p[], int index)
 {
     for (int i = 0; i < index; i++)
@@ -666,7 +718,7 @@ void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa)
             cout << "Nome: " << l[i].nome << endl;
             cout << "Quantidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
             buscarPessoa(p,l[i].id_pessoa_emprestado,indexPessoa);
-            cout << endl
+            cout << endl;
             totalLivrosEmprestados++;
         }else{
             totalLivrosNaoEmprestados++;
