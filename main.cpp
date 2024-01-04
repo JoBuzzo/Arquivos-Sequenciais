@@ -666,7 +666,7 @@ void imprimirLivroEmprestado(Livro l[], int index, Pessoa p[], int indexPessoa)
             cout << "Nome: " << l[i].nome << endl;
             cout << "Quantidade de vezes emprestado: " << l[i].quantidade_emprestada << endl;
             buscarPessoa(p,l[i].id_pessoa_emprestado,indexPessoa);
-            cout << endl
+            cout << endl;
             totalLivrosEmprestados++;
         }else{
             totalLivrosNaoEmprestados++;
